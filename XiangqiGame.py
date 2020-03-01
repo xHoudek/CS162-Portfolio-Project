@@ -128,8 +128,6 @@ class XiangqiGame:
         """check rules that apply to all pieces, and calls piece-specific rule check"""
         if self._game_state != 'UNFINISHED':  # if the game has ended
             return False
-        if not selected_piece:  # if we did not find a piece at the starting coordinates
-            return False
         if selected_piece.get_x_coordinate() == end_x and selected_piece.get_y_coordinate() == end_y:
             return False
         if end_x > 8 or end_x < 0 or end_y > 9 or end_y < 0:  # if the proposed move is out of bounds
@@ -140,6 +138,11 @@ class XiangqiGame:
                 return False
         if not selected_piece.is_legal_move(self, end_x, end_y):  # if the desired move is illegal on a per piece basis
             return False
+
+        # temporarily make move
+        self._board[int(selected_piece.get_y_coordinate())][int(selected_piece.get_x_coordinate())] = ''
+        temp = self._board[end_y][end_x]  # save this piece so nothing gets permanently captured
+        self._board[end_y][end_x] = selected_piece
 
         # cannot leave the general in the attack lines of any enemy piece
         general = None  # default value
@@ -152,22 +155,12 @@ class XiangqiGame:
             if piece.get_symbol()[1] != selected_piece.get_color()[0]:  # if piece in list is opposite color
                 if piece.is_legal_move(self, general.get_x_coordinate(), general.get_y_coordinate()):
                     in_attack_lines = True
+
+        self._board[int(selected_piece.get_y_coordinate())][int(selected_piece.get_x_coordinate())] = selected_piece
+        self._board[end_y][end_x] = temp
         if in_attack_lines:
             return False
 
-        # temporarily make move to ensure the current player is not in check
-        self._board[int(selected_piece.get_y_coordinate())][int(selected_piece.get_x_coordinate())] = ''
-        temp = self._board[end_y][end_x]  # save this piece so nothing gets permanently captured
-        self._board[end_y][end_x] = selected_piece
-        if self.is_in_check(self._turn.lower()):  # if the move puts or leaves the general in check
-            # return pieces to original place
-            self._board[int(selected_piece.get_y_coordinate())][int(selected_piece.get_x_coordinate())] = selected_piece
-            self._board[end_y][end_x] = temp
-            return False
-
-        # return pieces to original place
-        self._board[int(selected_piece.get_y_coordinate())][int(selected_piece.get_x_coordinate())] = selected_piece
-        self._board[end_y][end_x] = temp
         return True
 
     def make_move(self, start, end):
@@ -553,7 +546,7 @@ def alphanumerical_to_xy(alphanumerical):
 
 
 def main():
-    """used for testing"""
+    """used for testing. Think of this as scratch paper. See Xiangqi_unit_tests.py for actual tests"""
     # game = XiangqiGame()
     # game.show_board()
     #
@@ -586,9 +579,6 @@ def main():
     # print(game.get_turn())
     # game.show_board()
 
-
-
-
     game = XiangqiGame()
     print(game.make_move('b3', 'e3'))
     print(game.get_turn())
@@ -596,26 +586,19 @@ def main():
     print(game.make_move('h8', 'e8'))
     print(game.make_move('h3', 'h6'))
     print(game.make_move('b8', 'b4'))
+    print('black in check:', game.is_in_check('black'))
+    print(game.get_game_state())
+    game.show_board()
     print(game.make_move('e3', 'e7'))  # black is in check
+    print('black in check:', game.is_in_check('black'))
+    print(game.get_game_state())
     print(game.make_move('e8', 'e4'))
-    print(game.make_move('h6', 'e6'))  # black is mated here according to wikipedia
+    print(game.make_move('h6', 'e6'))  # black is checkmated here according to wikipedia
     game.show_board()
     print(game.get_game_state())
     print(game.get_turn())
     print('black in check:', game.is_in_check('black'))
 
-    # for piece in game._list_of_pieces:
-    #     print(piece.get_symbol() + ':')
-    #     for x in range(9):
-    #         for y in range(10):
-    #             if game.check_move_rules(piece, x, y):
-    #                 print(x, y)
-
-
-
-
-    # game = XiangqiGame()
-    # game.show_board()
     # for piece in game._list_of_pieces:
     #     print(piece.get_symbol() + ':')
     #     for x in range(9):
