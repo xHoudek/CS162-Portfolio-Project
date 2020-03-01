@@ -28,7 +28,7 @@ class MyTestCase(unittest.TestCase):
         move7 = game.make_move('h6', 'e6')  # black is checkmated here according to wikipedia
 
         self.assertEqual('RED_WON', game.get_game_state())  # currently says 'UNFINISHED'
-        self.assertTrue(move6)
+        self.assertTrue(move6 and move7)
 
     def test_readme_example(self):
         game = XiangqiGame.XiangqiGame()
@@ -40,6 +40,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(True, move_result)
         self.assertEqual(False, black_in_check)
         self.assertEqual('UNFINISHED', state)
+
 
 if __name__ == '__main__':
     unittest.main()
