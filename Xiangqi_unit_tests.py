@@ -28,6 +28,16 @@ class MyTestCase(unittest.TestCase):
 
         self.assertEqual('RED_WON', game.get_game_state())  # currently says 'UNFINISHED'
 
+    def test_readme_example(self):
+        game = XiangqiGame.XiangqiGame()
+        move_result = game.make_move('c1', 'e3')
+        black_in_check = game.is_in_check('black')
+        game.make_move('e7', 'e6')
+        state = game.get_game_state()
+
+        self.assertEqual(True, move_result)
+        self.assertEqual(False, black_in_check)
+        self.assertEqual('UNFINISHED', state)
 
 if __name__ == '__main__':
     unittest.main()
