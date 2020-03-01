@@ -132,12 +132,12 @@ class XiangqiGame:
             return False
         if selected_piece.get_x_coordinate() == end_x and selected_piece.get_y_coordinate() == end_y:
             return False
-        # if the color of the starting piece does not match the color of whose turn it is
         if end_x > 8 or end_x < 0 or end_y > 9 or end_y < 0:  # if the proposed move is out of bounds
             return False
         # if the space that the piece is trying to move to is occupied by a piece of the same color
-        if self._board[end_y][end_x] != '' and self._board[end_y][end_x].get_color().upper() == self.get_turn():
-            return False
+        if self._board[end_y][end_x] != '':
+            if self._board[end_y][end_x].get_color() == selected_piece.get_color():
+                return False
         if not selected_piece.is_legal_move(self, end_x, end_y):  # if the desired move is illegal on a per piece basis
             return False
         # temporarily make move to ensure the current player is not in check
@@ -198,10 +198,12 @@ class XiangqiGame:
         """returns True if a victory condition is met, otherwise returns False. Covers checkmate and stalemate"""
         any_legal_moves = False  # default value, assume there are no legal moves for the opposing player to make
         for piece in self._list_of_pieces:  # iterates through all pieces
+            print(piece.get_symbol(), ':')
             for x_coordinate in range(9):   # iterates through each coordinate on the board
                 for y_coordinate in range(10):
                     if piece.get_symbol()[1] != self._turn[0].lower():  # if piece is owned by "defending" player
                         if self.check_move_rules(piece, x_coordinate, y_coordinate):  # if move is legal
+                            print(x_coordinate, y_coordinate)
                             any_legal_moves = True  # then there is at least one move where player can get out of check
 
         if not any_legal_moves:
@@ -256,7 +258,14 @@ class General(Piece):
         if end_x - self._x_position in [-1, 1] and end_y - self._y_position in [-1, 1]:
             return False
 
-        # general cannot place itself in the attack lines of any enemy piece, this is taken care of in make_move
+        # general cannot place itself in the attack lines of any enemy piece
+        in_attack_lines = False
+        for piece in board.get_piece_list():  # iterate through all pieces
+            if piece.get_symbol()[-1] != self._color[0]:  # if piece in list is opposite color
+                if piece.is_legal_move(board, end_x, end_y):  # if enemy piece can move to piece's pos
+                    in_attack_lines = True
+        if in_attack_lines:
+            return False
 
         # general cannot move to a position where it is directly facing enemy general with no pieces in between
         enemy_general = None  # default value
@@ -308,16 +317,16 @@ class Elephant(Piece):
 
         # elephant may not jump over intervening pieces
         if end_x - self._x_position == -2 and end_y - self._y_position == -2:
-            if board.get_board()[end_y - self._y_position + 1][end_x - self._x_position + 1] != '':
+            if board.get_board()[self._y_position - 1][self._x_position - 1] != '':
                 return False
         if end_x - self._x_position == -2 and end_y - self._y_position == 2:
-            if board.get_board()[end_y - self._y_position - 1][end_x - self._x_position + 1] != '':
+            if board.get_board()[self._y_position + 1][self._x_position - 1] != '':
                 return False
         if end_x - self._x_position == 2 and end_y - self._y_position == 2:
-            if board.get_board()[end_y - self._y_position - 1][end_x - self._x_position - 1] != '':
+            if board.get_board()[self._y_position + 1][self._x_position + 1] != '':
                 return False
         if end_x - self._x_position == 2 and end_y - self._y_position == -2:
-            if board.get_board()[end_y - self._y_position + 1][end_x - self._x_position - 1] != '':
+            if board.get_board()[self._y_position - 1][self._x_position + 1] != '':
                 return False
 
         # elephant may not cross river
@@ -465,6 +474,10 @@ class Soldier(Piece):
             return False
         if self._symbol[1] == 'b' and self._y_position in [5, 6] and end_y - self._y_position != -1:
             return False
+        if self._symbol[1] == 'r' and self._y_position in [3, 4] and self._x_position - end_x != 0:
+            return False
+        if self._symbol[1] == 'b' and self._y_position in [5, 6] and self._x_position - end_x != 0:
+            return False
 
         # after the river, soldier may also move sideways
         if self._symbol[1] == 'r' and self._y_position in [5, 6, 7, 8, 9]:
@@ -524,37 +537,72 @@ def alphanumerical_to_xy(alphanumerical):
 
 def main():
     """used for testing"""
+    # game = XiangqiGame()
+    # game.show_board()
+    #
+    # print(game.get_game_state())
+    # print(game.get_turn())
+    # print(game.make_move('e1', 'e2'))
+    # game.show_board()
+    #
+    # print(game.get_game_state())
+    # print(game.get_turn())
+    # print(game.make_move('c7', 'c6'))
+    # game.show_board()
+    #
+    # print(game.get_game_state())
+    # print(game.get_turn())
+    # print(game.make_move('b3', 'c3'))
+    # game.show_board()
+    #
+    # print(game.get_game_state())
+    # print(game.get_turn())
+    # print(game.make_move('b10', 'c8'))
+    # game.show_board()
+    #
+    # print(game.get_game_state())
+    # print(game.get_turn())
+    # print(game.make_move('c3', 'c6'))
+    # game.show_board()
+    #
+    # print(game.get_game_state())
+    # print(game.get_turn())
+    # game.show_board()
+
+
+
+
     game = XiangqiGame()
+    game.make_move('b3', 'e3')
+    game.make_move('h8', 'e8')
+    game.make_move('h3', 'h6')
+    game.make_move('b8', 'b4')
+    game.make_move('e3', 'e7')  # black is in check
+    game.make_move('e8', 'e4')
+    print(game.make_move('h6', 'e6'))  # black is mated here according to wikipedia
     game.show_board()
-
     print(game.get_game_state())
     print(game.get_turn())
-    print(game.make_move('e1', 'e2'))
-    game.show_board()
+    print('black in check:', game.is_in_check('black'))
 
-    print(game.get_game_state())
-    print(game.get_turn())
-    print(game.make_move('c7', 'c6'))
-    game.show_board()
+    for piece in game._list_of_pieces:
+        print(piece.get_symbol() + ':')
+        for x in range(9):
+            for y in range(10):
+                if game.check_move_rules(piece, x, y):
+                    print(x, y)
 
-    print(game.get_game_state())
-    print(game.get_turn())
-    print(game.make_move('b3', 'c3'))
-    game.show_board()
 
-    print(game.get_game_state())
-    print(game.get_turn())
-    print(game.make_move('b10', 'c8'))
-    game.show_board()
 
-    print(game.get_game_state())
-    print(game.get_turn())
-    print(game.make_move('c3', 'c6'))
-    game.show_board()
 
-    print(game.get_game_state())
-    print(game.get_turn())
-    game.show_board()
+    # game = XiangqiGame()
+    # game.show_board()
+    # for piece in game._list_of_pieces:
+    #     print(piece.get_symbol() + ':')
+    #     for x in range(9):
+    #         for y in range(10):
+    #             if game.check_move_rules(piece, x, y):
+    #                 print(x, y)
 
 
 if __name__ == '__main__':
