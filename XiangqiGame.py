@@ -109,12 +109,12 @@ class XiangqiGame:
 
     def in_attack_range(self, x_position, y_position):
         """"returns True if the selected x and y coordinates are in attack range for any enemy piece"""
-        for piece in self._list_of_pieces:                                 # iterate through all pieces
-            if piece != self._board[y_position][x_position]:               # ignores selected piece
-                if piece.get_symbol()[-1] != self.get_turn()[0].lower():   # if piece in list is opposite color
-                    if piece.is_legal_move(self, x_position, y_position):  # if enemy piece can move to position
-                        return True                                        # then the position is in attack range
-        return False                                                       # if not, position is not in attack range
+        for piece in self._list_of_pieces:                                    # iterate through all pieces
+            if piece != self._board[y_position][x_position]:                  # ignores selected piece
+                if piece.get_symbol()[-1] != self.get_turn()[0].lower():      # if piece in list is opposite color
+                    if self.check_move_rules(piece, x_position, y_position):  # if enemy piece can move to position
+                        return True                                           # then the position is in attack range
+        return False                                                          # if not, position is not in attack range
 
     def is_in_check(self, color):
         """checks if player is in check, returns True if they are in check and returns False otherwise"""
@@ -127,8 +127,6 @@ class XiangqiGame:
 
     def check_move_rules(self, selected_piece, end_x, end_y):
         """check rules that apply to all pieces, and calls piece-specific rule check"""
-        if self._game_state != 'UNFINISHED':  # if the game has ended
-            return False
         # if move is to the same position that it is currently in
         if selected_piece.get_x_coordinate() == end_x and selected_piece.get_y_coordinate() == end_y:
             return False
@@ -148,16 +146,22 @@ class XiangqiGame:
 
         # cannot leave the general in the attack lines of any enemy piece
         general = None  # default value, will be changed to general of the same color
+        enemy_general = None  # default value
         if selected_piece.get_symbol()[1] == 'r':
             general = self._gr
+            enemy_general = self._gb
         elif selected_piece.get_symbol()[1] == 'b':
             general = self._gb
+            enemy_general = self._gr
+
         in_attack_lines = False  # default value
-        for piece in self._list_of_pieces:                              # iterate through all pieces
-            if piece.get_symbol()[1] != selected_piece.get_color()[0]:  # if piece in list is opposite color
-                if piece.is_legal_move(self, general.get_x_coordinate(), general.get_y_coordinate()):
-                    # if the enemy piece can legally make a move to the general position
-                    in_attack_lines = True                              # change value to reflect that
+        # if the piece is not currently attacking the enemy general (bc then it doesn't matter if general is in danger)
+        if end_x != enemy_general.get_x_coordinate() or end_y != enemy_general.get_y_coordinate():
+            for piece in self._list_of_pieces:                              # iterate through all pieces
+                if piece.get_symbol()[1] != selected_piece.get_color()[0]:  # if piece in list is opposite color
+                    if piece.is_legal_move(self, general.get_x_coordinate(), general.get_y_coordinate()):
+                        # if the enemy piece can legally make a move to the general position
+                        in_attack_lines = True                              # change value to reflect that
 
         # reset pieces to original position, regardless of if the move is legal or not
         self._board[int(selected_piece.get_y_coordinate())][int(selected_piece.get_x_coordinate())] = selected_piece
@@ -186,6 +190,9 @@ class XiangqiGame:
 
         # if the color of the starting piece does not match the color of whose turn it is
         if selected_piece.get_symbol()[1] != self.get_turn()[0].lower():
+            return False
+
+        if self._game_state != 'UNFINISHED':  # if the game has ended
             return False
 
         if not self.check_move_rules(selected_piece, end_x, end_y):  # if the selected move is illegal
@@ -587,25 +594,27 @@ def main():
     print(game.make_move('h8', 'e8'))
     print(game.make_move('h3', 'h6'))
     print(game.make_move('b8', 'b4'))
-    print('black in check:', game.is_in_check('black'))
+    print('black in check:', game.is_in_check('black'))  # should be False
+    print(game.get_game_state())
+    print(game.make_move('e3', 'e7'))  # black in check
     print(game.get_game_state())
     game.show_board()
-    print(game.make_move('e3', 'e7'))  # black is in check
+    # print('black in check:', game.is_in_check('black'))
+    # print(game.get_game_state())
+    # print(game.make_move('e8', 'e4'))
+    # print(game.make_move('h6', 'e6'))  # black is checkmated here according to wikipedia
+    # game.show_board()
+    # print(game.get_game_state())
+    # print(game.get_turn())
     print('black in check:', game.is_in_check('black'))
-    print(game.get_game_state())
-    print(game.make_move('e8', 'e4'))
-    print(game.make_move('h6', 'e6'))  # black is checkmated here according to wikipedia
-    game.show_board()
-    print(game.get_game_state())
-    print(game.get_turn())
-    print('black in check:', game.is_in_check('black'))
+    print('red in check:', game.is_in_check('red'))
 
-    # for piece in game._list_of_pieces:
-    #     print(piece.get_symbol() + ':')
-    #     for x in range(9):
-    #         for y in range(10):
-    #             if game.check_move_rules(piece, x, y):
-    #                 print(x, y)
+    for piece in game.get_piece_list():
+        print(piece.get_symbol() + ':')
+        for x in range(9):
+            for y in range(10):
+                if game.check_move_rules(piece, x, y):
+                    print(x, y)
 
 
 if __name__ == '__main__':

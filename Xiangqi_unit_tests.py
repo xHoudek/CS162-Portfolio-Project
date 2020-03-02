@@ -1,3 +1,6 @@
+# Name: Xander Houdek
+# Date: 03/02/20
+# Description: Unit tests for XiangqiGame.py
 import XiangqiGame
 import unittest
 
@@ -12,11 +15,25 @@ class MyTestCase(unittest.TestCase):
         """tests game up to check"""
         game = XiangqiGame.XiangqiGame()
         move1 = game.make_move('b3', 'e3')
+        self.assertFalse(game.is_in_check('black'))
+        self.assertFalse(game.is_in_check('red'))
+
         move2 = game.make_move('h8', 'e8')
+        self.assertFalse(game.is_in_check('black'))
+        self.assertFalse(game.is_in_check('red'))
+
         move3 = game.make_move('h3', 'h6')
+        self.assertFalse(game.is_in_check('black'))
+        self.assertFalse(game.is_in_check('red'))
+
         move4 = game.make_move('b8', 'b4')
+        self.assertFalse(game.is_in_check('black'))
+        self.assertFalse(game.is_in_check('red'))
+
         move5 = game.make_move('e3', 'e7')  # black is in check
-        self.assertEqual(game.is_in_check('black'), True)
+        self.assertTrue(game.is_in_check('black'))
+        self.assertFalse(game.is_in_check('red'))  # red is not in check
+
         self.assertTrue(move1 and move2 and move3 and move4 and move5)
 
     def test_early_checkmate(self):
@@ -28,11 +45,15 @@ class MyTestCase(unittest.TestCase):
         game.make_move('b8', 'b4')
         game.make_move('e3', 'e7')  # black is in check
         move6 = game.make_move('e8', 'e4')
+        self.assertFalse(game.is_in_check('black'))  # black gets out of check
         self.assertEqual('UNFINISHED', game.get_game_state())
 
-        move7 = game.make_move('h6', 'e6')  # black is checkmated here according to wikipedia
+        move7 = game.make_move('h6', 'e6')  # black is checkmated here
 
-        self.assertEqual('RED_WON', game.get_game_state())  # currently says 'UNFINISHED'
+        self.assertEqual('RED_WON', game.get_game_state())
+        self.assertTrue(game.is_in_check('black'))  # black was put into check
+        self.assertFalse(game.is_in_check('red'))  # red is not in check
+
         self.assertTrue(move6 and move7)
 
     def test_readme_example(self):
