@@ -8,7 +8,6 @@ class XiangqiGame:
 
     def __init__(self):
         """initializes the board with the game state and pieces"""
-
         # set game status
         self._game_state = 'UNFINISHED'  # can also be 'RED_WON' or 'BLACK_WON'
         self._turn = 'RED'               # can also be 'BLACK', alternates each turn
@@ -20,53 +19,54 @@ class XiangqiGame:
             for j in range(9):               # within each y coordinate, iterate 9 times
                 self._board[i].append('')    # to make 9 x coordinate positions
 
-        # initialize all red pieces
-        self.Rr = Rook('red', 0, 0)
-        self.Hr = Horse('red', 1, 0)
-        self.Er = Elephant('red', 2, 0)
-        self.Ar = Advisor('red', 3, 0)
-        self.Gr = General('red', 4, 0)
-        self.Ar2 = Advisor('red', 5, 0)
-        self.Er2 = Elephant('red', 6, 0)
-        self.Hr2 = Horse('red', 7, 0)
-        self.Rr2 = Rook('red', 8, 0)
-        self.Cr = Cannon('red', 1, 2)
-        self.Cr2 = Cannon('red', 7, 2)
-        self.Sr = Soldier('red', 0, 3)
-        self.Sr2 = Soldier('red', 2, 3)
-        self.Sr3 = Soldier('red', 4, 3)
-        self.Sr4 = Soldier('red', 6, 3)
-        self.Sr5 = Soldier('red', 8, 3)
+        # initialize all red pieces where first letter is piece name and second letter is color
+        self._rr = Rook('red', 0, 0)
+        self._hr = Horse('red', 1, 0)
+        self._er = Elephant('red', 2, 0)
+        self._ar = Advisor('red', 3, 0)
+        self._gr = General('red', 4, 0)
+        self._ar2 = Advisor('red', 5, 0)
+        self._er2 = Elephant('red', 6, 0)
+        self._hr2 = Horse('red', 7, 0)
+        self._rr2 = Rook('red', 8, 0)
+        self._cr = Cannon('red', 1, 2)
+        self._cr2 = Cannon('red', 7, 2)
+        self._sr = Soldier('red', 0, 3)
+        self._sr2 = Soldier('red', 2, 3)
+        self._sr3 = Soldier('red', 4, 3)
+        self._sr4 = Soldier('red', 6, 3)
+        self._sr5 = Soldier('red', 8, 3)
 
-        # initialize all black pieces
-        self.Rb = Rook('black', 0, 9)
-        self.Hb = Horse('black', 1, 9)
-        self.Eb = Elephant('black', 2, 9)
-        self.Ab = Advisor('black', 3, 9)
-        self.Gb = General('black', 4, 9)
-        self.Ab2 = Advisor('black', 5, 9)
-        self.Eb2 = Elephant('black', 6, 9)
-        self.Hb2 = Horse('black', 7, 9)
-        self.Rb2 = Rook('black', 8, 9)
-        self.Cb = Cannon('black', 1, 7)
-        self.Cb2 = Cannon('black', 7, 7)
-        self.Sb = Soldier('black', 0, 6)
-        self.Sb2 = Soldier('black', 2, 6)
-        self.Sb3 = Soldier('black', 4, 6)
-        self.Sb4 = Soldier('black', 6, 6)
-        self.Sb5 = Soldier('black', 8, 6)
+        # initialize all black pieces where first letter is piece name and second letter is color
+        self._rb = Rook('black', 0, 9)
+        self._hb = Horse('black', 1, 9)
+        self._eb = Elephant('black', 2, 9)
+        self._ab = Advisor('black', 3, 9)
+        self._gb = General('black', 4, 9)
+        self._ab2 = Advisor('black', 5, 9)
+        self._eb2 = Elephant('black', 6, 9)
+        self._hb2 = Horse('black', 7, 9)
+        self._rb2 = Rook('black', 8, 9)
+        self._cb = Cannon('black', 1, 7)
+        self._cb2 = Cannon('black', 7, 7)
+        self._sb = Soldier('black', 0, 6)
+        self._sb2 = Soldier('black', 2, 6)
+        self._sb3 = Soldier('black', 4, 6)
+        self._sb4 = Soldier('black', 6, 6)
+        self._sb5 = Soldier('black', 8, 6)
 
         # create list of all pieces
-        self._list_of_pieces = [self.Rr, self.Hr, self.Er, self.Ar, self.Gr, self.Ar2, self.Er2, self.Hr2, self.Rr2,
-                                self.Cr, self.Cr2, self.Sr, self.Sr2, self.Sr3, self.Sr4, self.Sr5,
-                                self.Rb, self.Hb, self.Eb, self.Ab, self.Gb, self.Ab2, self.Eb2, self.Hb2, self.Rb2,
-                                self.Cb, self.Cb2, self.Sb, self.Sb2, self.Sb3, self.Sb4, self.Sb5
+        self._list_of_pieces = [self._rr, self._hr, self._er, self._ar, self._gr, self._ar2, self._er2, self._hr2,
+                                self._rr2, self._cr, self._cr2, self._sr, self._sr2, self._sr3, self._sr4, self._sr5,
+                                self._rb, self._hb, self._eb, self._ab, self._gb, self._ab2, self._eb2, self._hb2,
+                                self._rb2, self._cb, self._cb2, self._sb, self._sb2, self._sb3, self._sb4, self._sb5
                                 ]
 
         # add all pieces to board
         for piece in self._list_of_pieces:                                            # iterate through each piece
-            self._board[piece.get_y_coordinate()][piece.get_x_coordinate()] = piece  # add piece to proper coordinate
+            self._board[piece.get_y_coordinate()][piece.get_x_coordinate()] = piece   # add piece to proper coordinate
 
+    # get methods
     def get_piece_list(self):
         """returns private list of pieces"""
         return self._list_of_pieces
@@ -74,6 +74,14 @@ class XiangqiGame:
     def get_board(self):
         """returns private board attribute"""
         return self._board
+
+    def get_game_state(self):
+        """returns private game_state data member"""
+        return self._game_state
+
+    def get_turn(self):
+        """returns private turn data member"""
+        return self._turn
 
     def show_board(self):
         """prints board in an easy to read manner"""
@@ -99,35 +107,29 @@ class XiangqiGame:
                 print('  | |  |  |  |  |  |  |  |  |  |')    # default decoration between each row
         print('  +-a--b--c--d--e--f--g--h--i--+')            # column indicators
 
-    def get_game_state(self):
-        """returns private game_state data member"""
-        return self._game_state
-
-    def get_turn(self):
-        """returns private turn data member"""
-        return self._turn
-
     def in_attack_range(self, x_position, y_position):
         """"returns True if the selected x and y coordinates are in attack range for any enemy piece"""
-        for piece in self._list_of_pieces:  # iterate through all pieces
-            if piece != self._board[y_position][x_position]:  # ignores selected piece
-                if piece.get_symbol()[-1] != self.get_turn()[0].lower():  # if piece in list is opposite color
-                    if piece.is_legal_move(self, x_position, y_position):  # if enemy piece can move to piece's pos
-                        return True
-        return False
+        for piece in self._list_of_pieces:                                 # iterate through all pieces
+            if piece != self._board[y_position][x_position]:               # ignores selected piece
+                if piece.get_symbol()[-1] != self.get_turn()[0].lower():   # if piece in list is opposite color
+                    if piece.is_legal_move(self, x_position, y_position):  # if enemy piece can move to position
+                        return True                                        # then the position is in attack range
+        return False                                                       # if not, position is not in attack range
 
     def is_in_check(self, color):
         """checks if player is in check, returns True if they are in check and returns False otherwise"""
-        if color == 'red' and self.in_attack_range(self.Gr.get_x_coordinate(), self.Gr.get_y_coordinate()):
+        # checks which color is selected, then checks if the corresponding general's position is in attack range
+        if color == 'red' and self.in_attack_range(self._gr.get_x_coordinate(), self._gr.get_y_coordinate()):
             return True
-        if color == 'black' and self.in_attack_range(self.Gb.get_x_coordinate(), self.Gb.get_y_coordinate()):
+        if color == 'black' and self.in_attack_range(self._gb.get_x_coordinate(), self._gb.get_y_coordinate()):
             return True
-        return False
+        return False  # if either not the color or the general is not in attack range
 
     def check_move_rules(self, selected_piece, end_x, end_y):
         """check rules that apply to all pieces, and calls piece-specific rule check"""
         if self._game_state != 'UNFINISHED':  # if the game has ended
             return False
+        # if move is to the same position that it is currently in
         if selected_piece.get_x_coordinate() == end_x and selected_piece.get_y_coordinate() == end_y:
             return False
         if end_x > 8 or end_x < 0 or end_y > 9 or end_y < 0:  # if the proposed move is out of bounds
@@ -145,20 +147,22 @@ class XiangqiGame:
         self._board[end_y][end_x] = selected_piece
 
         # cannot leave the general in the attack lines of any enemy piece
-        general = None  # default value
+        general = None  # default value, will be changed to general of the same color
         if selected_piece.get_symbol()[1] == 'r':
-            general = self.Gr
+            general = self._gr
         elif selected_piece.get_symbol()[1] == 'b':
-            general = self.Gb
+            general = self._gb
         in_attack_lines = False  # default value
-        for piece in self._list_of_pieces:  # iterate through all pieces
+        for piece in self._list_of_pieces:                              # iterate through all pieces
             if piece.get_symbol()[1] != selected_piece.get_color()[0]:  # if piece in list is opposite color
                 if piece.is_legal_move(self, general.get_x_coordinate(), general.get_y_coordinate()):
-                    in_attack_lines = True
+                    # if the enemy piece can legally make a move to the general position
+                    in_attack_lines = True                              # change value to reflect that
 
+        # reset pieces to original position, regardless of if the move is legal or not
         self._board[int(selected_piece.get_y_coordinate())][int(selected_piece.get_x_coordinate())] = selected_piece
         self._board[end_y][end_x] = temp
-        if in_attack_lines:
+        if in_attack_lines:  # if the move puts or leaves the general in the attack lines
             return False
 
         return True
@@ -177,7 +181,7 @@ class XiangqiGame:
 
         # find the desired piece in list
         selected_piece = self._board[start_y][start_x]
-        if selected_piece == '':
+        if selected_piece == '':  # if the start position does not contain a piece
             return False
 
         # if the color of the starting piece does not match the color of whose turn it is
@@ -208,12 +212,10 @@ class XiangqiGame:
         """returns True if a victory condition is met, otherwise returns False. Covers checkmate and stalemate"""
         any_legal_moves = False  # default value, assume there are no legal moves for the opposing player to make
         for piece in self._list_of_pieces:  # iterates through all pieces
-            # print(piece.get_symbol() + ':')  # TODO: delete this
             for x_coordinate in range(9):   # iterates through each coordinate on the board
                 for y_coordinate in range(10):
                     if piece.get_symbol()[1] != self._turn[0].lower():  # if piece is owned by "defending" player
                         if self.check_move_rules(piece, x_coordinate, y_coordinate):  # if move is legal
-                            # print(x_coordinate, y_coordinate)  # TODO: delete this
                             any_legal_moves = True  # then there is at least one move where player can get out of check
 
         if not any_legal_moves:
@@ -222,7 +224,6 @@ class XiangqiGame:
 
 class Piece:
     """A class to represent a game piece"""
-
     def __init__(self, color, x_position, y_position):
         """initializes the object representing the piece"""
         self._color = color            # can be red or black
@@ -269,9 +270,9 @@ class General(Piece):
             return False
 
         # general cannot place itself in the attack lines of any enemy piece
-        in_attack_lines = False
-        for piece in board.get_piece_list():  # iterate through all pieces
-            if piece.get_symbol()[-1] != self._color[0]:  # if piece in list is opposite color
+        in_attack_lines = False                               # default value
+        for piece in board.get_piece_list():                  # iterate through all pieces
+            if piece.get_symbol()[-1] != self._color[0]:      # if piece in list is opposite color
                 if piece.is_legal_move(board, end_x, end_y):  # if enemy piece can move to piece's pos
                     in_attack_lines = True
         if in_attack_lines:
@@ -326,16 +327,16 @@ class Elephant(Piece):
             return False
 
         # elephant may not jump over intervening pieces
-        if end_x - self._x_position == -2 and end_y - self._y_position == -2:
+        if end_x - self._x_position == -2 and end_y - self._y_position == -2:  # if the piece moves up and left
             if board.get_board()[self._y_position - 1][self._x_position - 1] != '':
                 return False
-        if end_x - self._x_position == -2 and end_y - self._y_position == 2:
+        if end_x - self._x_position == -2 and end_y - self._y_position == 2:   # if the piece moves down and left
             if board.get_board()[self._y_position + 1][self._x_position - 1] != '':
                 return False
-        if end_x - self._x_position == 2 and end_y - self._y_position == 2:
+        if end_x - self._x_position == 2 and end_y - self._y_position == 2:    # if the piece moves down and right
             if board.get_board()[self._y_position + 1][self._x_position + 1] != '':
                 return False
-        if end_x - self._x_position == 2 and end_y - self._y_position == -2:
+        if end_x - self._x_position == 2 and end_y - self._y_position == -2:   # if the piece moves up and right
             if board.get_board()[self._y_position - 1][self._x_position + 1] != '':
                 return False
 
@@ -365,16 +366,16 @@ class Horse(Piece):
             return False
 
         # horses may not jump over intervening pieces (on the orthogonal move):
-        if end_x - self._x_position == -2 and end_y - self._y_position in [-1, 1]:
+        if end_x - self._x_position == -2 and end_y - self._y_position in [-1, 1]:  # if the piece moves left first
             if board.get_board()[self._y_position][self._x_position - 1] != '':
                 return False
-        if end_x - self._x_position in [-1, 1] and end_y - self._y_position == -2:
+        if end_x - self._x_position in [-1, 1] and end_y - self._y_position == -2:  # if the piece moves up first
             if board.get_board()[self._y_position - 1][self._x_position] != '':
                 return False
-        if end_x - self._x_position == 2 and end_y - self._y_position in [-1, 1]:
+        if end_x - self._x_position == 2 and end_y - self._y_position in [-1, 1]:  # if the piece moves right first
             if board.get_board()[self._y_position][self._x_position + 1] != '':
                 return False
-        if end_x - self._x_position in [-1, 1] and end_y - self._y_position == 2:
+        if end_x - self._x_position in [-1, 1] and end_y - self._y_position == 2:  # if the piece moves down first
             if board.get_board()[self._y_position + 1][self._x_position] != '':
                 return False
 
@@ -428,19 +429,19 @@ class Cannon(Piece):
 
         # if the proposed move is to an empty space (ie, when not capturing), the rules are the same as rook
         if board.get_board()[end_y][end_x] == '':
-            if end_x - self._x_position > 0:    # if the rook moves right
+            if end_x - self._x_position > 0:    # if the cannon moves right
                 for x_position in range(self._x_position + 1, end_x):  # iterate over all indexes between start and end
                     if board.get_board()[self._y_position][x_position] != '':
                         return False
-            if end_x - self._x_position < 0:    # if the rook moves left
+            if end_x - self._x_position < 0:    # if the cannon moves left
                 for x_position in range(end_x + 1, self._x_position):  # iterate over all indexes between end and start
                     if board.get_board()[self._y_position][x_position] != '':
                         return False
-            if end_y - self._y_position > 0:    # if the rook moves down
+            if end_y - self._y_position > 0:    # if the cannon moves down
                 for y_position in range(self._y_position + 1, end_y):  # iterate over all indexes between start and end
                     if board.get_board()[y_position][self._x_position] != '':
                         return False
-            if end_y - self._y_position < 0:  # if the rook moves up
+            if end_y - self._y_position < 0:  # if the cannon moves up
                 for y_position in range(end_y + 1, self._y_position):  # iterate over all indexes between end and start
                     if board.get_board()[y_position][self._x_position] != '':
                         return False
@@ -482,23 +483,23 @@ class Soldier(Piece):
         # before the river, soldiers may only move forward one space
         if self._symbol[1] == 'r' and self._y_position in [3, 4] and end_y - self._y_position != 1:
             return False
-        if self._symbol[1] == 'b' and self._y_position in [5, 6] and end_y - self._y_position != -1:
-            return False
         if self._symbol[1] == 'r' and self._y_position in [3, 4] and self._x_position - end_x != 0:
+            return False
+        if self._symbol[1] == 'b' and self._y_position in [5, 6] and end_y - self._y_position != -1:
             return False
         if self._symbol[1] == 'b' and self._y_position in [5, 6] and self._x_position - end_x != 0:
             return False
 
         # after the river, soldier may also move sideways
-        if self._symbol[1] == 'r' and self._y_position in [5, 6, 7, 8, 9]:
-            if end_y - self._y_position == 1 and end_x - self._x_position != 0:
+        if self._symbol[1] == 'r' and self._y_position in [5, 6, 7, 8, 9]:  # if the piece is past the river
+            if end_y - self._y_position == 1 and end_x - self._x_position != 0:  # if piece moves forward and to side
                 return False
-            if end_y - self._y_position == 0 and end_x - self._x_position not in [-1, 1]:
+            if end_y - self._y_position == 0 and end_x - self._x_position not in [-1, 1]:  # if piece moves >1 space
                 return False
-        if self._symbol[1] == 'b' and self._x_position in [0, 1, 2, 3, 4]:
-            if end_y - self._y_position == -1 and end_x - self._x_position != 0:
+        if self._symbol[1] == 'b' and self._x_position in [0, 1, 2, 3, 4]:  # if the piece is past the river
+            if end_y - self._y_position == -1 and end_x - self._x_position != 0:  # if piece moves forward and to side
                 return False
-            if end_y - self._y_position == 0 and end_x - self._x_position not in [-1, 1]:
+            if end_y - self._y_position == 0 and end_x - self._x_position not in [-1, 1]:  # if piece moves >1 space
                 return False
 
         # soldiers may never retreat
@@ -510,7 +511,7 @@ class Soldier(Piece):
         return True
 
 
-# static function
+# static function because it is not attached to any class
 def alphanumerical_to_xy(alphanumerical):
     """converts alphanumerical position to a tuple with x/y coordinates"""
     # default values
@@ -539,10 +540,10 @@ def alphanumerical_to_xy(alphanumerical):
 
     # determine y position based off of number
     if len(alphanumerical) == 2:
-        y_position = int(alphanumerical[1]) - 1
-    elif len(alphanumerical) == 3:
-        y_position = int(alphanumerical[1] + alphanumerical[2]) - 1
-    return x_position, y_position
+        y_position = int(alphanumerical[1]) - 1  # converts to int and subtracts 1 (because lists start at 0)
+    elif len(alphanumerical) == 3:  # this block is to allow for 10 on y axis, e.g. 'f10'
+        y_position = int(alphanumerical[1] + alphanumerical[2]) - 1  # converts to int and subtracts 1
+    return x_position, y_position  # returns a tuple to be manipulated in make_move
 
 
 def main():
