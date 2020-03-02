@@ -309,7 +309,10 @@ class Advisor(Piece):
         self._symbol = 'A' + self._color[0]       # make symbol first letter of class and first letter of color
 
     def is_legal_move(self, board, end_x, end_y):
-        """returns True if proposed move is legal, otherwise returns False."""
+        """
+        returns True if proposed move is legal, otherwise returns False. Note that board parameter is not used here but
+        is used in other Piece classes, and is left in to allow all pieces to be looped over.
+        """
         # advisor can only ever move one space diagonally
         if end_x - self._x_position not in [-1, 1] or end_y - self._y_position not in [-1, 1]:
             return False
@@ -486,7 +489,10 @@ class Soldier(Piece):
         self._symbol = 'S' + self._color[0]       # make symbol first letter of class and first letter of color
 
     def is_legal_move(self, board, end_x, end_y):
-        """returns True if proposed move is legal, otherwise returns False"""
+        """
+        returns True if proposed move is legal, otherwise returns False. Note that board parameter is not used here but
+        is used in other Piece classes, and is left in to allow all pieces to be looped over.
+        """
         # before the river, soldiers may only move forward one space
         if self._symbol[1] == 'r' and self._y_position in [3, 4] and end_y - self._y_position != 1:
             return False
