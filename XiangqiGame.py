@@ -509,11 +509,15 @@ class Soldier(Piece):
 
         # after the river, soldier may also move sideways
         if self._symbol[1] == 'r' and self._y_position in [5, 6, 7, 8, 9]:  # if the piece is past the river
+            if end_y - self._y_position not in [0, 1] or end_x - self._x_position not in [-1, 0, 1]:
+                return False
             if end_y - self._y_position == 1 and end_x - self._x_position != 0:  # if piece moves forward and to side
                 return False
             if end_y - self._y_position == 0 and end_x - self._x_position not in [-1, 1]:  # if piece moves >1 space
                 return False
         if self._symbol[1] == 'b' and self._x_position in [0, 1, 2, 3, 4]:  # if the piece is past the river
+            if end_y - self._y_position not in [0, -1] or end_x - self._x_position not in [-1, 0, 1]:
+                return False
             if end_y - self._y_position == -1 and end_x - self._x_position != 0:  # if piece moves forward and to side
                 return False
             if end_y - self._y_position == 0 and end_x - self._x_position not in [-1, 1]:  # if piece moves >1 space
@@ -596,28 +600,34 @@ def main():
     # print(game.get_game_state())
     # print(game.get_turn())
     # game.show_board()
+    #
+    # game = XiangqiGame()
+    # print(game.make_move('b3', 'e3'))
+    # print(game.get_turn())
+    # print(game.get_game_state())
+    # print(game.make_move('h8', 'e8'))
+    # print(game.make_move('h3', 'h6'))
+    # print(game.make_move('b8', 'b4'))
+    # print('black in check:', game.is_in_check('black'))  # should be False
+    # print(game.get_game_state())
+    # print(game.make_move('e3', 'e7'))  # black in check
+    # print(game.get_game_state())
+    # game.show_board()
+    # # print('black in check:', game.is_in_check('black'))
+    # # print(game.get_game_state())
+    # # print(game.make_move('e8', 'e4'))
+    # # print(game.make_move('h6', 'e6'))  # black is checkmated here according to wikipedia
+    # # game.show_board()
+    # # print(game.get_game_state())
+    # # print(game.get_turn())
+    # print('black in check:', game.is_in_check('black'))
+    # print('red in check:', game.is_in_check('red'))
 
     game = XiangqiGame()
-    print(game.make_move('b3', 'e3'))
-    print(game.get_turn())
-    print(game.get_game_state())
-    print(game.make_move('h8', 'e8'))
-    print(game.make_move('h3', 'h6'))
-    print(game.make_move('b8', 'b4'))
-    print('black in check:', game.is_in_check('black'))  # should be False
-    print(game.get_game_state())
-    print(game.make_move('e3', 'e7'))  # black in check
-    print(game.get_game_state())
+    game.make_move('c4', 'c5')
+    game.make_move('a7', 'a6')
+    game.make_move('c5', 'c6')  # wins game for some reason
     game.show_board()
-    # print('black in check:', game.is_in_check('black'))
-    # print(game.get_game_state())
-    # print(game.make_move('e8', 'e4'))
-    # print(game.make_move('h6', 'e6'))  # black is checkmated here according to wikipedia
-    # game.show_board()
-    # print(game.get_game_state())
-    # print(game.get_turn())
-    print('black in check:', game.is_in_check('black'))
-    print('red in check:', game.is_in_check('red'))
 
     for piece in game.get_piece_list():
         print(piece.get_symbol() + ':')
