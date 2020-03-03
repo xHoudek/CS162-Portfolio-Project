@@ -167,10 +167,20 @@ class XiangqiGame:
                         # if the enemy piece can legally make a move to the general position
                         in_attack_lines = True                              # change value to reflect that
 
+        # also cannot maneuver in a way where generals face each other without any pieces separating them
+        flying_general = False
+        if self._gb.get_x_coordinate() == self._gr.get_x_coordinate():  # if they are on the same y coordinate
+            flying_general = True
+            for y_coordinate in range(self._gr.get_y_coordinate() + 1, self._gb.get_y_coordinate()):
+                if self._board[y_coordinate][self._gb.get_x_coordinate()] != '':  # if the space is occupied by a piece
+                    flying_general = False  # then flying general does not apply
+
         # reset pieces to original position, regardless of if the move is legal or not
         self._board[int(selected_piece.get_y_coordinate())][int(selected_piece.get_x_coordinate())] = selected_piece
         self._board[end_y][end_x] = temp
         if in_attack_lines:  # if the move puts or leaves the general in the attack lines
+            return False
+        if flying_general:
             return False
 
         return True
@@ -288,20 +298,6 @@ class General(Piece):
                     in_attack_lines = True
         if in_attack_lines:
             return False
-
-        # general cannot move to a position where it is directly facing enemy general with no pieces in between
-        enemy_general = None  # default value
-        for piece in board.get_piece_list():     # iterate over every piece in list
-            # if the symbol matches the symbol of the enemy general
-            if piece.get_symbol()[0] == 'G' and piece.get_symbol()[1] != board.get_turn()[0].lower():
-                enemy_general = piece                  # assign piece to variable
-        if end_x == enemy_general.get_x_coordinate():  # if the desired x coordinate is the same as the enemy general's
-            blocking_pieces = False                    # default value, assume there are no pieces in the way
-            for y_coordinate in range(10):             # iterates over each y coordinate, giving index
-                if board.get_board()[y_coordinate][end_x] != '':  # if there is any piece along the x_coordinate
-                    blocking_pieces = True             # reassign variable to reflect that
-            if not blocking_pieces:                    # if there are no pieces in the way
-                return False                           # would activate the 'flying general' move, and is thus illegal
 
         return True
 
