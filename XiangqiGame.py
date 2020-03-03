@@ -85,8 +85,9 @@ class XiangqiGame:
 
     def show_board(self):
         """prints board in an easy to read manner"""
-        print('  +-a--b--c--d--e--f--g--h--i--+')            # column indicators
-        for row in range(len(self._board)):                  # iterates over each row, giving index
+        print('    a  b  c  d  e  f  g  h  i   ')            # column indicators
+        print('  +----------------------------+')
+        for row in [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]:                  # iterates over each row, giving index
             if row == 9:                                     # on the last row,
                 print(str(10) + '|-', end='')                       # change the decoration since 10 is 2 digits
             else:                                                       # on any other row,
@@ -97,15 +98,18 @@ class XiangqiGame:
                 else:                                                     # otherwise, if it is blank
                     print('+-', end='-')                                # prints a 'blank' space
             print('|' + str(row + 1))                               # prints row number plus some decoration
-            if row in [0, 7]:                                  # if it is a specific row, will print special decoration
+            if row in [2, 9]:                                  # if it is a specific row, will print special decoration
                 print('  | |  |  |  |\ | /|  |  |  |  |')
             elif row in [1, 8]:
                 print('  | |  |  |  |/ | \|  |  |  |  |')
-            elif row == 9:                                   # if it is the last row
+            elif row == 0:                                   # if it is the last row
                 continue                                     # skip. we don't need more decoration
+            elif row == 5:                                   # if it is the middle
+                print('  |                            |')    # print the river
             else:                                            # otherwise, if it is in any other row
                 print('  | |  |  |  |  |  |  |  |  |  |')    # default decoration between each row
-        print('  +-a--b--c--d--e--f--g--h--i--+')            # column indicators
+        print('  +----------------------------+')
+        print('    a  b  c  d  e  f  g  h  i   ')            # column indicators
 
     def in_attack_range(self, x_position, y_position):
         """"returns True if the selected x and y coordinates are in attack range for any enemy piece"""
