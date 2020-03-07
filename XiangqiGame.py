@@ -163,9 +163,14 @@ class XiangqiGame:
         if end_x != enemy_general.get_x_coordinate() or end_y != enemy_general.get_y_coordinate():
             for piece in self._list_of_pieces:                              # iterate through all pieces
                 if piece.get_symbol()[1] != selected_piece.get_color()[0]:  # if piece in list is opposite color
-                    if piece.is_legal_move(self, general.get_x_coordinate(), general.get_y_coordinate()):
+                    if piece.get_y_coordinate() != end_y or piece.get_x_coordinate() != end_x:
                         # if the enemy piece can legally make a move to the general position
-                        in_attack_lines = True                              # change value to reflect that
+                        if selected_piece.get_symbol()[0] != 'G':           # if the moving piece is not the general
+                            if self.check_move_rules(piece, general.get_x_coordinate(), general.get_y_coordinate()):
+                                in_attack_lines = True                      # change value to reflect that
+                        elif selected_piece.get_symbol()[0] == 'G ':        # if the moving piece is the general
+                            if self.check_move_rules(piece, end_x, end_y):  # same as above, but measure end position
+                                in_attack_lines = True
 
         # also cannot maneuver in a way where generals face each other without any pieces separating them
         flying_general = False
@@ -286,16 +291,31 @@ class General(Piece):
         if end_x - self._x_position not in [-1, 0, 1] or end_y - self._y_position not in [-1, 0, 1]:
             return False
 
+        # general cannot leave the palace
+        if end_x not in [3, 4, 5] or end_y not in [0, 1, 2, 7, 8, 9]:
+            return False
+
         # general cannot move diagonally, so one position difference must be 0
         if end_x - self._x_position in [-1, 1] and end_y - self._y_position in [-1, 1]:
             return False
 
+        # temporarily make move
+        board.get_board()[int(self._y_position)][int(self._x_position)] = ''
+        temp = board.get_board()[end_y][end_x]  # save this piece so nothing gets permanently captured
+        board.get_board()[end_y][end_x] = self
+
         # general cannot place itself in the attack lines of any enemy piece
-        in_attack_lines = False                               # default value
-        for piece in board.get_piece_list():                  # iterate through all pieces
-            if piece.get_symbol()[-1] != self._color[0]:      # if piece in list is opposite color
-                if piece.is_legal_move(board, end_x, end_y):  # if enemy piece can move to piece's pos
-                    in_attack_lines = True
+        in_attack_lines = False                                  # default value
+        for piece in board.get_piece_list():                     # iterate through all pieces
+            if piece.get_symbol()[-1] != self._color[0]:         # if piece in list is opposite color
+                if piece.get_y_coordinate() != end_y or piece.get_x_coordinate() != end_x:  # skips "captured" piece
+                    if board.check_move_rules(piece, end_x, end_y):  # if enemy piece can move to piece's pos
+                        in_attack_lines = True
+
+        # reset pieces
+        board.get_board()[int(self.get_y_coordinate())][int(self.get_x_coordinate())] = self
+        board.get_board()[end_y][end_x] = temp
+
         if in_attack_lines:
             return False
 
@@ -619,18 +639,108 @@ def main():
     # print('black in check:', game.is_in_check('black'))
     # print('red in check:', game.is_in_check('red'))
 
-    game = XiangqiGame()
-    game.make_move('c4', 'c5')
-    game.make_move('a7', 'a6')
-    game.make_move('c5', 'c6')  # wins game for some reason
-    game.show_board()
+    # game = XiangqiGame()
+    # game.make_move('c4', 'c5')
+    # game.make_move('a7', 'a6')
+    # game.make_move('c5', 'c6')  # wins game for some reason
+    # game.show_board()
+    #
+    # for piece in game.get_piece_list():
+    #     print(piece.get_symbol() + ':')
+    #     for x in range(9):
+    #         for y in range(10):
+    #             if game.check_move_rules(piece, x, y):
+    #                 print(x, y)
 
-    for piece in game.get_piece_list():
-        print(piece.get_symbol() + ':')
-        for x in range(9):
-            for y in range(10):
-                if game.check_move_rules(piece, x, y):
-                    print(x, y)
+    game = XiangqiGame()
+    print(game.make_move('c1', 'e3'))
+    print(game.make_move('e7', 'e6'))
+    print(game.make_move('b1', 'd2'))
+    print(game.make_move('h10', 'g8'))
+    print(game.make_move('h1', 'i3'))
+    print(game.make_move('g10', 'e8'))
+    print(game.make_move('h3', 'g3'))
+    print(game.make_move('i7', 'i6'))
+    print(game.make_move('i1', 'h1'))
+    print(game.make_move('g7', 'g6'))
+    print(game.make_move('d2', 'f3'))
+    print(game.make_move('h8', 'i8'))
+    print(game.make_move('d1', 'e2'))
+    print(game.make_move('b8', 'd8'))
+    print(game.make_move('a1', 'd1'))
+    print(game.make_move('b10', 'c8'))
+    print(game.make_move('g4', 'g5'))
+    print(game.make_move('d10', 'e9'))
+    print(game.make_move('g5', 'g6'))
+    print(game.make_move('g8', 'f6'))
+    print(game.make_move('g3', 'g2'))
+    print(game.make_move('f6', 'e4'))
+    print(game.make_move('d1', 'd4'))
+    print(game.make_move('a10', 'b10'))
+    print(game.make_move('d4', 'e4'))
+    print(game.make_move('i8', 'i4'))
+    print(game.get_game_state())
+    print(game.get_turn())
+    print(game.make_move('e1', 'd1'))
+    game.show_board()
+    print(game.make_move('b10', 'b3'))
+    print(game.make_move('f3', 'e5'))
+    print(game.make_move('i10', 'i7'))
+    print(game.make_move('h1', 'h10'))
+    print(game.make_move('e6', 'e5'))
+    game.show_board()
+    print(game.get_turn())
+    print(game.get_game_state())
+    print(game.make_move('h10', 'f10'))
+    game.show_board()
+    print(game.get_turn())
+    print(game.get_game_state())
+    # print(game._gb.is_legal_move(game, 5, 10))
+    #
+    # in_attack_lines = False  # default value
+    # for piece in game.get_piece_list():  # iterate through all pieces
+    #     print(piece.get_symbol())
+    #     if piece.get_symbol()[-1] != game._gb._color[0]:  # if piece in list is opposite color
+    #         if game.check_move_rules(piece, 5, 10):  # if enemy piece can move to piece's pos
+    #             in_attack_lines = True
+    #             print('x')
+    # if in_attack_lines:
+    #     return False
+    #
+    # for piece in game.get_piece_list():
+    #     print(piece.get_symbol() + ':')
+    #     for x in range(9):
+    #         for y in range(10):
+    #             if game.check_move_rules(piece, x, y):
+    #                 print(x, y)
+
+    print(game.make_move('e10', 'f10'))
+    print(game.make_move('e4', 'i4'))
+    game.show_board()
+    print(game.get_turn())
+    print(game.make_move('d1', 'e1'))
+    print(game.make_move('i7', 'd7'))
+    print(game.make_move('c4', 'c5'))
+    print(game.make_move('b3', 'b1'))
+    print(game.make_move('e2', 'd1'))
+    print(game.make_move('b1', 'd1'))
+    print(game.make_move('e1', 'e2'))
+    print(game.make_move('d7', 'd2'))
+    game.show_board()
+    print(game.get_turn())
+    print(game.get_game_state())
+
+    # for piece in game.get_piece_list():
+    #     print(piece.get_symbol() + ':')
+    #     for x in range(9):
+    #         for y in range(10):
+    #             if game.check_move_rules(piece, x, y):
+    #                 print(x, y)
+
+    print(game.make_move('d1', 'e1'))
+    game.show_board()
+    print(game.get_turn())
+    print(game.get_game_state())
 
 
 if __name__ == '__main__':
